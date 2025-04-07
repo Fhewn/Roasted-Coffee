@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROASTED. | Modern Kahve Deneyimi</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <a href="#anasayfa">ROASTED.</a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#anasayfa">Ana Sayfa</a></li>
+            <li><a href="#menu">Menü</a></li>
+            <li><a href="#hakkimizda">Hakkımızda</a></li>
+            <li><a href="#iletisim">İletişim</a></li>
+            <li class="cart-icon">
+                <a href="#" id="cart-button">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Sepet Modal -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-shopping-basket"></i> Sepetiniz</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="cart-items"></div>
+                <div class="cart-summary">
+                    <div class="summary-item">
+                        <span>Ara Toplam:</span>
+                        <span id="cart-subtotal">₺0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>KDV (%18):</span>
+                        <span id="cart-tax">₺0</span>
+                    </div>
+                    <div class="summary-item total">
+                        <span>Toplam:</span>
+                        <span id="cart-total-price">₺0</span>
+                    </div>
+                </div>
+                <div class="payment-options">
+                    <h3>Ödeme Seçenekleri</h3>
+                    <div class="payment-methods">
+                        <label class="payment-method">
+                            <input type="radio" name="payment" value="cash" checked>
+                            <div class="payment-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>Nakit</span>
+                            </div>
+                        </label>
+                        <label class="payment-method">
+                            <input type="radio" name="payment" value="credit">
+                            <div class="payment-icon">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Kredi Kartı</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div id="credit-card-form" style="display: none;">
+                        <div class="form-group card-number">
+                            <label><i class="far fa-credit-card"></i> Kart Numarası</label>
+                            <input type="text" id="card-number" maxlength="19" placeholder="1234 5678 9012 3456">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="far fa-calendar-alt"></i> Son Kullanma</label>
+                                <input type="text" id="card-expiry" maxlength="5" placeholder="AA/YY">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-lock"></i> CVV</label>
+                                <input type="text" id="card-cvv" maxlength="3" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-notes">
+                    <label for="order-notes"><i class="fas fa-pencil-alt"></i> Sipariş Notu</label>
+                    <textarea id="order-notes" placeholder="Özel isteklerinizi buraya yazabilirsiniz..."></textarea>
+                </div>
+                <button id="checkout-btn" class="btn checkout-btn">
+                    <i class="fas fa-check-circle"></i> Sipariş Ver
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sipariş Onay Modal -->
+    <div id="order-confirm-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Siparişiniz Alındı</h2>
+            <div class="order-details">
+                <p>Sipariş Numarası: <span id="order-number"></span></p>
+                <div id="order-items"></div>
+                <p>Toplam: <span id="order-total"></span></p>
+                <p>Ödeme Yöntemi: <span id="payment-method"></span></p>
+                <p>Tahmini Hazırlanma Süresi: <span id="preparation-time"></span> dakika</p>
+            </div>
+            <div class="order-actions">
+                <button id="print-receipt" class="btn">Fiş Yazdır</button>
+                <button id="close-order" class="btn">Tamam</button>
+            </div>
+        </div>
+    </div>
+
+    <section id="anasayfa" class="hero">
+        <div class="hero-content">
+            <h1>En İyi Kahve Deneyimi</h1>
+            <p>Özenle seçilmiş çekirdeklerden, uzman baristalarımız tarafından hazırlanan eşsiz kahveler.</p>
+            <a href="#menu" class="btn">Menüyü Gör</a>
+        </div>
+    </section>
+
+    <section id="menu" class="menu">
+        <h2>Menü</h2>
+        <div class="menu-categories">
+            <button class="category-btn active" data-category="all">Hepsi</button>
+            <button class="category-btn" data-category="sicak">Sıcak İçecekler</button>
+            <button class="category-btn" data-category="soguk">Soğuk İçecekler</button>
+            <button class="category-btn" data-category="tatli">Tatlılar</button>
+            <button class="category-btn" data-category="yiyecek">Yiyecekler</button>
+        </div>
+        <div class="menu-search">
+            <input type="text" id="menu-search" placeholder="Menüde ara...">
+        </div>
+        <div class="menu-grid">
+            <div class="menu-item" data-category="sicak">
+                <div class="menu-item-badge">Popüler</div>
+                <img src="https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04" alt="Espresso">
+                <h3>Espresso</h3>
+                <p>Yoğun aromalı espresso</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Boyut:</label>
+                        <select class="size-select" data-item="Espresso">
+                            <option value="tekli" data-price="65">Tekli</option>
+                            <option value="dubble" data-price="75" selected>Dubble</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label>Ekstralar:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" data-extra="Süt" data-price="15"> Süt (+₺15)</label>
+                            <label><input type="checkbox" data-extra="Karamel" data-price="20"> Karamel (+₺20)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺75</span>
+                    <button class="add-to-cart" data-name="Espresso" data-price="75">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="sicak">
+                <div class="menu-item-badge">Yeni</div>
+                <img src="https://images.unsplash.com/photo-1561882468-9110e03e0f78" alt="Latte">
+                <h3>Latte</h3>
+                <p>Kadifemsi süt köpüğü ile</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Boyut:</label>
+                        <select class="size-select" data-item="Latte">
+                            <option value="small" data-price="65">Küçük</option>
+                            <option value="medium" data-price="75" selected>Orta</option>
+                            <option value="large" data-price="85">Büyük</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label>Ekstra:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" data-extra="Karamel" data-price="15"> Karamel (+₺15)</label>
+                            <label><input type="checkbox" data-extra="Vanilya" data-price="15"> Vanilya (+₺15)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺75</span>
+                    <button class="add-to-cart" data-name="Latte" data-price="75">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="sicak">
+                <img src="https://methodicalcoffee.com/cdn/shop/articles/cap_1024x.jpg?v=1684507364" alt="Cappuccino">
+                <h3>Cappuccino</h3>
+                <p>İtalyan usulü klasik</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Boyut:</label>
+                        <select class="size-select" data-item="Cappuccino">
+                            <option value="small" data-price="65">Küçük</option>
+                            <option value="medium" data-price="75" selected>Orta</option>
+                            <option value="large" data-price="85">Büyük</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label>Ekstra:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" data-extra="Kakao" data-price="10"> Kakao (+₺10)</label>
+                            <label><input type="checkbox" data-extra="Tarçın" data-price="10"> Tarçın (+₺10)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺75</span>
+                    <button class="add-to-cart" data-name="Cappuccino" data-price="75">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="tatli">
+                <div class="menu-item-badge">Önerilen</div>
+                <img src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9" alt="Tiramisu">
+                <h3>Tiramisu</h3>
+                <p>İtalyan usulü kahveli tatlı</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Boyut:</label>
+                        <select class="size-select" data-item="Tiramisu">
+                            <option value="small" data-price="85">Küçük</option>
+                            <option value="medium" data-price="95" selected>Orta</option>
+                            <option value="large" data-price="105">Büyük</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺95</span>
+                    <button class="add-to-cart" data-name="Tiramisu" data-price="95">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="yiyecek">
+                <img src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af" alt="Sandviç">
+                <h3>Sandviç</h3>
+                <p>Taze malzemelerle hazırlanmış</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Çeşit:</label>
+                        <select class="size-select" data-item="Sandviç">
+                            <option value="tavuk" data-price="85" selected>Tavuk</option>
+                            <option value="ton" data-price="95">Ton Balıklı</option>
+                            <option value="vejeteryan" data-price="75">Vejeteryan</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label>Ekstra:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" data-extra="Peynir" data-price="20"> Peynir (+₺20)</label>
+                            <label><input type="checkbox" data-extra="Avokado" data-price="25"> Avokado (+₺25)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺85</span>
+                    <button class="add-to-cart" data-name="Sandviç" data-price="85">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="soguk">
+                <img src="https://www.sadahastanesi.com/tr/public/storage/ayran-kac-kalori---ayranin-besin-degeri.webp" alt="Ayran">
+                <h3>Ayran</h3>
+                <p>Serinletici ayran</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Boyut:</label>
+                        <select class="size-select" data-item="Ayran">
+                            <option value="small" data-price="20">Küçük</option>
+                            <option value="medium" data-price="25" selected>Orta</option>
+                            <option value="large" data-price="30">Büyük</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺25</span>
+                    <button class="add-to-cart" data-name="Ayran" data-price="25" data-size="medium">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="soguk">
+                <img src="https://images.unsplash.com/photo-1572490122747-3968b75cc699" alt="Milkshake">
+                <h3>Milkshake</h3>
+                <p>Kremalı ve soğuk</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Çeşit:</label>
+                        <select class="size-select" data-item="Milkshake">
+                            <option value="çikolata" data-price="45" selected>Çikolata</option>
+                            <option value="vanilya" data-price="45">Vanilya</option>
+                            <option value="karamel" data-price="45">Karamel</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label>Ekstra:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" data-item="Milkshake" data-extra="Krema" data-price="7"> Krem Şanti (+₺7)</label>
+                            <label><input type="checkbox" data-item="Milkshake" data-extra="Çikolata" data-price="7"> Çikolata Sosu (+₺7)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺45</span>
+                    <button class="add-to-cart" data-name="Milkshake" data-price="45" data-variant="çikolata">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="tatli">
+                <img src="https://images.unsplash.com/photo-1579372786545-d24232daf58c" alt="Sufle">
+                <h3>Sufle</h3>
+                <p>Sıcak çikolatalı sufle</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Çeşit:</label>
+                        <select class="size-select" data-item="Sufle">
+                            <option value="classic" data-price="55" selected>Klasik</option>
+                            <option value="fındık" data-price="60">Fındıklı</option>
+                            <option value="krem" data-price="60">Kremalı</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺55</span>
+                    <button class="add-to-cart" data-name="Sufle" data-price="55" data-variant="classic">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="tatli">
+                <img src="https://images.unsplash.com/photo-1634118520179-0c78b72df69a" alt="Profiterol">
+                <h3>Profiterol</h3>
+                <p>Kremalı ve çikolatalı</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Boyut:</label>
+                        <select class="size-select" data-item="Profiterol">
+                            <option value="small" data-price="45">Küçük</option>
+                            <option value="medium" data-price="55" selected>Orta</option>
+                            <option value="large" data-price="65">Büyük</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺55</span>
+                    <button class="add-to-cart" data-name="Profiterol" data-price="55" data-size="medium">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="yiyecek">
+                <img src="https://images.unsplash.com/photo-1485451456034-3f9391c6f769" alt="Tost">
+                <h3>Tost</h3>
+                <p>Özel peynir ve malzemelerle</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Çeşit:</label>
+                        <select class="size-select" data-item="Tost">
+                            <option value="karışık" data-price="40" selected>Karışık</option>
+                            <option value="kaşar" data-price="35">Kaşarlı</option>
+                            <option value="sucuk" data-price="45">Sucuklu</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label>Ekstra:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" data-item="Tost" data-extra="Domates" data-price="5"> Domates (+₺5)</label>
+                            <label><input type="checkbox" data-item="Tost" data-extra="Biber" data-price="5"> Biber (+₺5)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺40</span>
+                    <button class="add-to-cart" data-name="Tost" data-price="40" data-variant="karışık">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="yiyecek">
+                <img src="https://images.unsplash.com/photo-1583182332473-b31ba08929c8" alt="Poğaça">
+                <h3>Poğaça</h3>
+                <p>Taze pişmiş poğaça</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Çeşit:</label>
+                        <select class="size-select" data-item="Poğaça">
+                            <option value="peynir" data-price="25" selected>Peynirli</option>
+                            <option value="patates" data-price="25">Patatesli</option>
+                            <option value="zeytin" data-price="25">Zeytinli</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺25</span>
+                    <button class="add-to-cart" data-name="Poğaça" data-price="25" data-variant="peynir">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="yiyecek">
+                <img src="https://images.unsplash.com/photo-1583182332473-b31ba08929c8" alt="Simit">
+                <h3>Simit</h3>
+                <p>Taze pişmiş simit</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Çeşit:</label>
+                        <select class="size-select" data-item="Simit">
+                            <option value="klasik" data-price="35" selected>Klasik</option>
+                            <option value="susamlı" data-price="35">Susamlı</option>
+                            <option value="çıtır" data-price="40">Çıtır</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label>Ekstra:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" data-extra="Peynir" data-price="15"> Peynir (+₺15)</label>
+                            <label><input type="checkbox" data-extra="Reçel" data-price="10"> Reçel (+₺10)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺35</span>
+                    <button class="add-to-cart" data-name="Simit" data-price="35">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="kahvalti">
+                <img src="https://images.unsplash.com/photo-1668236543090-82eba5ee5976" alt="Serpme Kahvaltı">
+                <h3>Serpme Kahvaltı</h3>
+                <p>Zengin kahvaltı çeşitleri</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Kişi Sayısı:</label>
+                        <select class="size-select" data-item="Serpme Kahvaltı">
+                            <option value="1" data-price="120" selected>1 Kişilik</option>
+                            <option value="2" data-price="220">2 Kişilik</option>
+                            <option value="4" data-price="400">4 Kişilik</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺120</span>
+                    <button class="add-to-cart" data-name="Serpme Kahvaltı" data-price="120" data-size="1">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="kahvalti">
+                <img src="https://images.unsplash.com/photo-1606851682837-019baf2e8da4" alt="Omlet">
+                <h3>Omlet</h3>
+                <p>Özel malzemelerle hazırlanmış omlet</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Çeşit:</label>
+                        <select class="size-select" data-item="Omlet">
+                            <option value="klasik" data-price="45" selected>Klasik</option>
+                            <option value="mantar" data-price="50">Mantarlı</option>
+                            <option value="peynir" data-price="50">Peynirli</option>
+                            <option value="karışık" data-price="55">Karışık</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺45</span>
+                    <button class="add-to-cart" data-name="Omlet" data-price="45" data-variant="klasik">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="atistirmalik">
+                <img src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e" alt="Kurabiye">
+                <h3>Kurabiye</h3>
+                <p>Ev yapımı kurabiyeler</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Çeşit:</label>
+                        <select class="size-select" data-item="Kurabiye">
+                            <option value="çikolata" data-price="25" selected>Çikolatalı</option>
+                            <option value="fındık" data-price="25">Fındıklı</option>
+                            <option value="tarçın" data-price="25">Tarçınlı</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label>Adet:</label>
+                        <select class="size-select" data-item="Kurabiye Adet">
+                            <option value="1" data-price="25" selected>1 Adet</option>
+                            <option value="3" data-price="65">3 Adet</option>
+                            <option value="6" data-price="120">6 Adet</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺25</span>
+                    <button class="add-to-cart" data-name="Kurabiye" data-price="25" data-variant="çikolata" data-size="1">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="atistirmalik">
+                <img src="https://images.unsplash.com/photo-1587668178277-295251f900ce" alt="Muffin">
+                <h3>Muffin</h3>
+                <p>Taze pişmiş muffinler</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Çeşit:</label>
+                        <select class="size-select" data-item="Muffin">
+                            <option value="çikolata" data-price="30" selected>Çikolatalı</option>
+                            <option value="muz" data-price="30">Muzlu</option>
+                            <option value="yabanmersini" data-price="35">Yabanmersinli</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺30</span>
+                    <button class="add-to-cart" data-name="Muffin" data-price="30" data-variant="çikolata">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="sicak">
+                <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd" alt="Filtre Kahve">
+                <h3>Filtre Kahve</h3>
+                <p>Özel harman filtre kahve</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Boyut:</label>
+                        <select class="size-select" data-item="Filtre Kahve">
+                            <option value="small" data-price="75">Küçük</option>
+                            <option value="medium" data-price="85" selected>Orta</option>
+                            <option value="large" data-price="95">Büyük</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label>Ekstra:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" data-extra="Süt" data-price="15"> Süt (+₺15)</label>
+                            <label><input type="checkbox" data-extra="Aroma" data-price="20"> Aroma (+₺20)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺85</span>
+                    <button class="add-to-cart" data-name="Filtre Kahve" data-price="85">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="soguk">
+                <img src="https://images.unsplash.com/photo-1517701604599-bb29b565090c" alt="Frappe">
+                <h3>Frappe</h3>
+                <p>Buzlu ve kremalı kahve</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Çeşit:</label>
+                        <select class="size-select" data-item="Frappe">
+                            <option value="klasik" data-price="85" selected>Klasik</option>
+                            <option value="karamel" data-price="95">Karamelli</option>
+                            <option value="mocha" data-price="95">Mocha</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label>Ekstra:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" data-extra="Krema" data-price="20"> Ekstra Krema (+₺20)</label>
+                            <label><input type="checkbox" data-extra="Çikolata" data-price="20"> Çikolata Sosu (+₺20)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺85</span>
+                    <button class="add-to-cart" data-name="Frappe" data-price="85">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="sicak">
+                <img src="https://images.unsplash.com/photo-1515283709260-ee29296f1534" alt="Türk Kahvesi">
+                <h3>Türk Kahvesi</h3>
+                <p>Geleneksel Türk kahvesi</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Çeşit:</label>
+                        <select class="size-select" data-item="Türk Kahvesi">
+                            <option value="sade" data-price="55" selected>Sade</option>
+                            <option value="orta" data-price="55">Orta</option>
+                            <option value="sekerli" data-price="55">Şekerli</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label>Yanında:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" data-extra="Lokum" data-price="15"> Lokum (+₺15)</label>
+                            <label><input type="checkbox" data-extra="Su" data-price="10"> Su (+₺10)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺55</span>
+                    <button class="add-to-cart" data-name="Türk Kahvesi" data-price="55">Sepete Ekle</button>
+                </div>
+            </div>
+            <div class="menu-item" data-category="tatli">
+                <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307" alt="Cheesecake">
+                <h3>Cheesecake</h3>
+                <p>Ev yapımı cheesecake</p>
+                <div class="menu-item-options">
+                    <div class="option-group">
+                        <label>Çeşit:</label>
+                        <select class="size-select" data-item="Cheesecake">
+                            <option value="klasik" data-price="95" selected>Klasik</option>
+                            <option value="frambuaz" data-price="105">Frambuazlı</option>
+                            <option value="cikolata" data-price="105">Çikolatalı</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label>Ekstra:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" data-extra="Sos" data-price="20"> Meyve Sosu (+₺20)</label>
+                            <label><input type="checkbox" data-extra="Krema" data-price="15"> Krema (+₺15)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item-footer">
+                    <span class="price">₺95</span>
+                    <button class="add-to-cart" data-name="Cheesecake" data-price="95">Sepete Ekle</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="hakkimizda" class="about">
+        <h2>Hakkımızda</h2>
+        <div class="about-content">
+            <p>2010 yılından beri en kaliteli kahve çekirdeklerini özenle seçiyor, her fincan kahveyi tutkuyla hazırlıyoruz. Amacımız, size unutulmaz bir kahve deneyimi yaşatmak.</p>
+        </div>
+    </section>
+
+    <section id="iletisim" class="contact">
+        <h2>İletişim</h2>
+        <div class="contact-info">
+            <div class="info-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <p>Kahve Sokak No:123, İstanbul</p>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-phone"></i>
+                <p>+90 555 123 4567</p>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-envelope"></i>
+                <p>info@kahvedunyasi.com</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 ROASTED. Tüm hakları saklıdır.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 
